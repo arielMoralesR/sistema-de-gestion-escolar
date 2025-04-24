@@ -66,7 +66,7 @@ include ('../../app/controllers/niveles/listado_de_niveles.php');
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="">Turnos</label>
+                                            <label for="">paralelo</label>
                                             <select name="paralelo" id="" class="form-control">
                                                 <option value="A">A</option>
                                                 <option value="B">B</option>

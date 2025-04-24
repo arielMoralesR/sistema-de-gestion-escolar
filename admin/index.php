@@ -6,6 +6,7 @@ include ('../app/controllers/usuarios/listado_de_usuarios.php');
 include ('../app/controllers/niveles/listado_de_niveles.php');
 include ('../app/controllers/grados/listado_de_grados.php');
 include ('../app/controllers/materias/listado_de_materias.php');
+include ('../app/controllers/administrativos/listado_administrativos.php');
 ?>
 
 <!-- Content Wrapper. Contains page content -->
@@ -98,7 +99,7 @@ include ('../app/controllers/materias/listado_de_materias.php');
                             <p>Grados registrados</p>
                         </div>
                         <div class="icon">
-                            <i class="fas"><i class="bi bi-bookshelf"></i></i></i>
+                            <i class="fas"><i class="bi bi-bar-chart-steps"></i></i>
                         </div>
                         <a href="<?=APP_URL;?>/admin/grados" class="small-box-footer">
                             Más información <i class="fas fa-arrow-circle-right"></i>
@@ -120,14 +121,33 @@ include ('../app/controllers/materias/listado_de_materias.php');
                             <p>Materias registrados</p>
                         </div>
                         <div class="icon">
-                            <i class="fas"><i class="bi bi-bookshelf"></i></i></i>
+                            <i class="fas"><i class="bi bi-book-half"></i></i></i>
                         </div>
                         <a href="<?=APP_URL;?>/admin/materias" class="small-box-footer">
                             Más información <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
-
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-default">
+                        <div class="inner">
+                            <?php
+                            $contador_administrativos = 0;
+                            foreach ($administrativos as $administrativo){
+                                $contador_administrativos = $contador_administrativos + 1;
+                            }
+                            ?>
+                            <h3><?=$contador_administrativos;?></h3>
+                            <p>administrativos registrados</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas"><i class="bi bi-book-half"></i></i></i>
+                        </div>
+                        <a href="<?=APP_URL;?>/admin/administrativos" class="small-box-footer">
+                            Más información <i class="fas fa-arrow-circle-right"></i>
+                        </a>
+                    </div>
+                </div>
 
             </div>
             <!-- /.row -->

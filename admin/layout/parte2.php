@@ -15,7 +15,7 @@
         V. 1.0.
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; <?=$ano_actual;?> <a href="https://hilariweb.com">Hilari Web</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; <?=$ano_actual;?> <a href="https://ArielMorales.com">Ariel Morales</a>.</strong> All rights reserved.
 </footer>
 </div>
 <!-- ./wrapper -->

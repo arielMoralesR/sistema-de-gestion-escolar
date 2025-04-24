@@ -15,7 +15,7 @@ include ('../../app/controllers/roles/listado_de_roles.php');
     <div class="content">
         <div class="container">
             <div class="row">
-                <h1>Modificar usuario: <?=$nombres;?></h1>
+                <h1>Modificar usuario: <?=$nombres;?> <?=$apellidos;?></h1>
             </div>
             <br>
             <div class="row">
@@ -48,12 +48,7 @@ include ('../../app/controllers/roles/listado_de_roles.php');
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="">Nombres del usuarios</label>
-                                            <input type="text" name="nombres" value="<?=$nombres;?>" class="form-control" required>
-                                        </div>
-                                    </div>
+                                    
 
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -65,13 +60,13 @@ include ('../../app/controllers/roles/listado_de_roles.php');
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="">Passwrod</label>
+                                            <label for="">Contraseña</label>
                                             <input type="password" name="password" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="">Repetir Passwrod</label>
+                                            <label for="">Repetir Contraseña</label>
                                             <input type="password" name="password_repet" class="form-control">
                                         </div>
                                     </div>
