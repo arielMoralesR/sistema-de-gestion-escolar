@@ -2,6 +2,7 @@
 include ('../../app/config.php');
 include ('../../admin/layout/parte1.php');
 include ('../../app/controllers/roles/listado_de_roles.php');
+include ('../../app/controllers/materias/listado_de_materias.php');
 
 ?>
 
@@ -32,7 +33,7 @@ include ('../../app/controllers/roles/listado_de_roles.php');
                                                 <select name="rol_id" id="" class="form-control">
                                                     <?php
                                                     foreach ($roles as $role){ ?>
-                                                        <option value="<?=$role['id_rol'];?>"<?=$role['nombre_rol']=="DOCENTE" ? 'selected' : ''?>disabled><?=$role['nombre_rol'];?></option>
+                                                        <option value="<?=$role['id_rol'];?>"<?=$role['nombre_rol']=="DOCENTE" ? 'selected' : ''?>  ><?=$role['nombre_rol'];?></option>
                                                         <?php
                                                     }
                                                     ?>
@@ -101,7 +102,23 @@ include ('../../app/controllers/roles/listado_de_roles.php');
                                             <input type="text" name="especialidad" class="form-control" required>
                                         </div>
                                     </div>
-                                    
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="">Materias que enseña</label>
+                                            <a href="<?=APP_URL;?>/admin/materias/create.php" style="margin-left: 5px" class="btn btn-primary btn-sm"><i class="bi bi-file-plus"></i></a>
+                                            <div class="form-inline">
+                                                <select name="materias_id[]" id="materias" class="form-control" multiple required>
+                                                    <?php
+                                                    foreach ($materias as $materia){ ?>
+                                                        <option value="<?=$materia['id_materia'];?>"  ><?=$materia['nombre_materia'];?></option>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                                <small class="text-muted">Mantén presionado Ctrl para seleccionar múltiples materias</small>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <hr>
                                 <div class="row">
@@ -115,7 +132,7 @@ include ('../../app/controllers/roles/listado_de_roles.php');
                                 </div>
                                 
                             </form>
-                        </div>
+                        </div> 
                     </div>
                 </div>
             </div>

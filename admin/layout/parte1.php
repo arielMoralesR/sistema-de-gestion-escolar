@@ -1,19 +1,41 @@
 <?php
-session_start();
+// session_start() ya es llamado en config.php, por lo que se elimina de aquí.
 
 if(isset($_SESSION['sesion_email'])){
-   // echo "el usuarios paso por el login";
     $email_sesion = $_SESSION['sesion_email'];
-    $query_sesion = $pdo->prepare("SELECT * FROM usuarios WHERE email = '$email_sesion' AND estado = '1' ");
-    $query_sesion->execute();
+    
+    // Obtener el rol_id de la sesión
+    $rol_id_sesion = $_SESSION['rol_id'] ?? 0; // 0 si no está definido
 
-    $datos_sesion_usuarios = $query_sesion->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($datos_sesion_usuarios as $datos_sesion_usuario){
-       $nombre_sesion_usuario = $datos_sesion_usuario['email'];
+    // Definir arrays de roles para facilitar las condiciones   
+    $roles_acceso_total = range(1, 5); // Roles del 1 al 5
+    define('ROL_DOCENTE', 6);
+    define('ROL_ESTUDIANTE', 8);
+    define('ROL_PADRE_FAMILIA', 9); // ¡ASEGÚRATE QUE ESTE ID EXISTA Y SEA CORRECTO EN TU BD!
+    define('ROL_REGENTE', 10);      // ¡ASEGÚRATE QUE ESTE ID EXISTA Y SEA CORRECTO EN TU BD!
+    // Usar sentencias preparadas para seguridad
+    $query_sesion = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email AND estado = '1'");
+    $query_sesion->bindParam(':email', $email_sesion);
+    $query_sesion->execute();
+    
+    $datos_sesion_usuario = $query_sesion->fetch(PDO::FETCH_ASSOC); // Obtener solo un usuario
+    
+    if($datos_sesion_usuario){
+        // Si se encontró el usuario, puedes obtener su nombre o el email para mostrar
+        // Por ejemplo, para mostrar el nombre: $nombre_para_mostrar = $datos_sesion_usuario['nombres'];
+        // Para mantener la lógica original de mostrar el email:
+        $nombre_sesion_usuario = $datos_sesion_usuario['email']; 
+        // Considera si quieres mostrar el nombre real del usuario: $nombre_sesion_usuario = $datos_sesion_usuario['nombres'];
+    } else {
+        // El usuario de la sesión no se encontró en la BD o no está activo
+        // Puedes destruir la sesión y redirigir al login
+        session_destroy();
+        header('Location:'.APP_URL."/login?mensaje=Usuario no válido o inactivo");
+        exit;
     }
 }else{
-    echo "el usuario no paso por el login";
     header('Location:'.APP_URL."/login");
+    exit; // Es importante añadir exit después de una redirección
 }
 ?>
 <!DOCTYPE html>
@@ -131,8 +153,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
-
-
+                    
+                    <?php if (in_array($rol_id_sesion, $roles_acceso_total)): ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link active">
                             <i class="nav-icon fas"><i class="bi bi-gear"></i></i>
@@ -143,16 +165,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="<?=APP_URL;?>/admin/configuraciones" class="nav-link active">
+                                <a href="<?=APP_URL;?>/admin/configuraciones" class="nav-link"> <!-- Quitado active para que solo se active la página actual -->
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Configurar</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
+                    <?php endif; ?>
 
-
-
+                    <?php if (in_array($rol_id_sesion, $roles_acceso_total)): ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link active">
                             <i class="nav-icon fas"><i class="bi bi-bookshelf"></i></i>
@@ -163,14 +185,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="<?=APP_URL;?>/admin/niveles" class="nav-link active">
+                                <a href="<?=APP_URL;?>/admin/niveles" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listado de niveles</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
+                    <?php endif; ?>
 
+                    <?php if (in_array($rol_id_sesion, $roles_acceso_total)): ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link active">
                             <i class="nav-icon fas"><i class="bi bi-bar-chart-steps"></i></i>
@@ -181,14 +205,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="<?=APP_URL;?>/admin/grados" class="nav-link active">
+                                <a href="<?=APP_URL;?>/admin/grados" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listado de grados</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
+                    <?php endif; ?>
 
+                    <?php if (in_array($rol_id_sesion, $roles_acceso_total)): ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link active">
                             <i class="nav-icon fas"><i class="bi bi-book-half"></i></i>
@@ -199,16 +225,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="<?=APP_URL;?>/admin/materias" class="nav-link active">
+                                <a href="<?=APP_URL;?>/admin/materias" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listado de materias</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
+                    <?php endif; ?>
 
-
-
+                    <?php if (in_array($rol_id_sesion, $roles_acceso_total)): ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link active">
                             <i class="nav-icon fas"><i class="bi bi-bookmarks"></i></i>
@@ -219,14 +245,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="<?=APP_URL;?>/admin/roles" class="nav-link active">
+                                <a href="<?=APP_URL;?>/admin/roles" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listado de roles</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
+                    <?php endif; ?>
 
+                    <?php if (in_array($rol_id_sesion, $roles_acceso_total)): ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link active">
                             <i class="nav-icon fas"><i class="bi bi-people-fill"></i></i>
@@ -237,14 +265,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="<?=APP_URL;?>/admin/usuarios" class="nav-link active">
+                                <a href="<?=APP_URL;?>/admin/usuarios" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listado de usuarios</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
+                    <?php endif; ?>
 
+                    <?php if (in_array($rol_id_sesion, $roles_acceso_total)): ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link active">
                             <i class="nav-icon fas"><i class="bi bi-person-lines-fill"></i></i>
@@ -255,13 +285,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="<?=APP_URL;?>/admin/administrativos" class="nav-link active">
+                                <a href="<?=APP_URL;?>/admin/administrativos" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listado de administrativos</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
+                    <?php endif; ?>
+
+                    <?php if (in_array($rol_id_sesion, $roles_acceso_total)): ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link active">
                             <i class="nav-icon fas"><i class="bi bi-person-video3"></i></i>
@@ -272,17 +305,146 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="<?=APP_URL;?>/admin/docentes" class="nav-link active">
+                                <a href="<?=APP_URL;?>/admin/docentes" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listado de Docentes</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
+                    <?php endif; ?>
 
+                    <?php if ($rol_id_sesion == ROL_DOCENTE): // Solo Docentes ?>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="nav-icon fas"><i class="bi bi-book"></i></i>
+                            <p>
+                                Tareas
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?=APP_URL;?>/admin/tareas" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>crear tarea</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <?php endif; ?>
 
+                    <?php // Conducta: Roles 1-5, Docente (6), Regente (10)
+                    if (in_array($rol_id_sesion, array_merge($roles_acceso_total, [ROL_DOCENTE, ROL_REGENTE]))): ?>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="nav-icon fas"><i class="bi bi-person-fill-exclamation"></i></i>
+                            <p>
+                                Conducta
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?=APP_URL;?>/admin/conducta" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Registrar Conducta</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <?php endif; ?>
 
+                    <?php // Asistencia: Docente (6), Regente (10)
+                    if (in_array($rol_id_sesion, [ROL_DOCENTE, ROL_REGENTE])): ?>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="nav-icon fas"><i class="bi bi-person-fill-check"></i></i>
+                            <p>
+                                Asistencia
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?=APP_URL;?>/admin/asistencia" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Registrar Asistencia</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <?php endif; ?>
 
+                    <?php // Reportes: Roles 1-5, Padre de Familia (9)
+                    if (in_array($rol_id_sesion, array_merge($roles_acceso_total, [ROL_PADRE_FAMILIA]))): ?>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="nav-icon fas"><i class="bi bi-person-vcard-fill"></i></i>
+                            <p>
+                                Reportes
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?=APP_URL;?>/admin/reportes" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Lista de reportes</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <?php endif; ?>
+
+                    <?php if ($rol_id_sesion == ROL_ESTUDIANTE): // Solo Estudiantes ?>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="nav-icon fas"><i class="bi bi-postcard-fill"></i></i>
+                            <i class="nav-icon fas"><i class="bi bi-postcard-fill"></i></i>
+                            <p>
+                                Tareas pendientes
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?=APP_URL;?>/admin/deberes" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Lista de tareas</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <?php endif; ?>
+
+                    <?php if (in_array($rol_id_sesion, $roles_acceso_total)): // Solo roles con acceso total ?>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="nav-icon fas"><i class="bi bi-person-plus-fill"></i></i>
+                            <p>
+                                Estudiantes
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?=APP_URL;?>/admin/inscripciones" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Inscripcion de Estudiantes</p>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?=APP_URL;?>/admin/estudiantes" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listado de Estudiantes</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <?php endif; ?>
 
                     <li class="nav-item">
                         <a href="<?=APP_URL;?>/login/logout.php" class="nav-link" style="background-color: #eb2d14;color: black">

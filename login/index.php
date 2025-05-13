@@ -1,5 +1,11 @@
 <?php
 include ('../app/config.php');
+
+// Si ya hay una sesión activa (ej. 'sesion_email' está establecida), redirigir al admin
+if (isset($_SESSION['sesion_email'])) {
+    header('Location: ' . APP_URL . '/admin');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,14 +65,14 @@ include ('../app/config.php');
             </form>
 
             <?php
-            session_start();
+            // session_start(); // ELIMINADO - Ya se llama en config.php
             if(isset($_SESSION['mensaje'])){
                 $mensaje = $_SESSION['mensaje'];
+                $icono = $_SESSION['icono'] ?? 'info'; // Usar el icono de la sesión o 'info' por defecto
                 ?>
                 <script>
                     Swal.fire({
-                        position: "middle-end",
-                        icon: "error",
+                        icon: "<?=$icono;?>",
                         title: "<?=$mensaje;?>",
                         showConfirmButton: false,
                         timer: 4000
@@ -74,6 +80,7 @@ include ('../app/config.php');
                 </script>
             <?php
                 session_destroy();
+                // session_unset(); // Alternativa más ligera si solo quieres limpiar las variables de sesión
             }
             ?>
 

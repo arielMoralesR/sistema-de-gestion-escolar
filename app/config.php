@@ -5,6 +5,12 @@
  * Date: 28/12/2023
  * Time: 19:18
  */
+
+// Iniciar la sesión si no está iniciada ya.
+// Esto asegura que session_start() se llama una sola vez y al principio.
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 define('SERVIDOR','localhost');
 define('USUARIO','root');
 define('PASSWORD','');
@@ -33,6 +39,3 @@ $mes_actual = date('m');
 $ano_actual = date('Y');
 
 $estado_de_registro = '1';
-
-
-
